@@ -19,11 +19,34 @@ const httpCreateMovie = async (req: Request, res: Response) => {
   }
 };
 const httpGetMovies = async (req: Request, res: Response) => {
-  const movie = await Movie.find();
+  try{
+    const movie:movie[] = await Movie.find();
 
   res
     .status(200)
     .json({ message: "success", numberOfMovies: movie.length, data: movie });
+  }catch(error){
+    res.status(404).json({
+      status: "Fail",
+      Error: error,
+    });
+  }
+  
 };
-
-export { httpCreateMovie, httpGetMovies };
+const httpUpdateMovies = async (req: Request, res:Response) => {
+  try
+  {
+    
+   const movie: movie | null = await Movie.findByIdAndUpdate(req.params.id, req.body);
+   if (!movie) {
+     return res.status(404).json({ status: "Fail", message: "Movie not found" });
+   }
+   res.status(200).json({ message: "success", movie });
+  }catch(error){
+    res.status(404).json({
+      status: "Fail",
+      Error: error,
+    });
+  }
+}
+export { httpCreateMovie, httpGetMovies, httpUpdateMovies };
