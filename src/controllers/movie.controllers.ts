@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Movie from "../models/Movie";
 import { movie } from "../@types/movieTypes";
+import { string } from "joi";
 
 const httpCreateMovie = async (req: Request, res: Response) => {
   try {
@@ -49,4 +50,19 @@ const httpUpdateMovies = async (req: Request, res:Response) => {
     });
   }
 }
-export { httpCreateMovie, httpGetMovies, httpUpdateMovies };
+
+const httpDeleteMovies = async (req:Request, res:Response)=>{
+  try{
+ const movie:movie | null = await Movie.findByIdAndDelete(req.params.id);
+ if(!movie){
+  return res.status(404).json({status:"Not Found", message:"Movie not found"});
+ }
+ res.status(200).json({message:"Movie deleted Successfully!"});
+  }catch(error){
+    res.status(404).json({
+      status: "Fail",
+      Error: error,
+    });
+  }
+}
+export { httpCreateMovie, httpGetMovies, httpUpdateMovies, httpDeleteMovies };

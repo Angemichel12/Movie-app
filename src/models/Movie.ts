@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import slugify from 'slugify';
 
 const schema = mongoose.Schema;
 
@@ -8,6 +9,7 @@ const MovieSchema = new schema(
       type: String,
       required: [true, "Movie must have a title"],
     },
+    slug:String,
     duration: {
       type: String,
       require: [true, "Movie must have a duration"],
@@ -44,7 +46,10 @@ const MovieSchema = new schema(
   },
   { timestamps: true }
 );
-
+MovieSchema.pre('save', function(next){
+  this.slug = slugify(this.title, {lower:true});
+  next();
+})
 const Movie = mongoose.model("Movie", MovieSchema);
 
 export default Movie;
